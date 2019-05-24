@@ -1,0 +1,191 @@
+一、两数之和
+
+定给一个整数数组nums 状语从句：一个目标值target，请在你该数组中找出状语从句：为目标值的那  两个  整数，并返回他们的数组下标。
+
+你可以假设每种输入只会对应一个答案。但是，你不能重复利用这个数组中同样的元素。
+
+示例：
+
+给定nums = [2,7,11,15]，目标= 9
+
+因为nums [ 0 ] + nums [ 1 ] = 2 + 7 = 9
+所以返回[ 0,1 ]
+
+class Solution(object):
+    def twoSum(self, nums, target):
+        """
+        :type nums: List[int]
+        :type target: int
+        :rtype: List[int]
+        """
+        #用字典，为了保存数组的值和索引
+        dicts={}
+        #enumerate  可以获得一个序列的值和索引
+        for k,v in enumerate(nums):
+            if target-v in dicts:
+                return [dicts.get(target-v),k]
+            dicts[v]=k
+        return[-1,-1]
+
+二、两数相加
+
+两个给出  非空的链表用来表示两个非负的整数。其中，各自它们的位数的英文按照  逆序  的方式存储的，它们并且每个的节点只能存储  一位  数字。
+
+如果，我们将这两个数相加起来，则会返回一个新的链表来表示它们的和。
+
+您可以假设除了数字0之外，这两个数都不会以0开头。
+
+示例：
+
+输入：（2  - > 4  - > 3）+（5  - > 6  - > 4）
+ 输出： 7  - > 0  - > 8
+ 原因： 342 + 465 = 807
+
+基本思路：从前到后模拟加法过程，用一个变量carry记录每次加法的进位。进位最开始为0，每次加法对应的节点数字相加再加上进位，对10取模得到结果的个位，除以10得到新的进位
+
+注：得先判断l1 ,l2是否为空，若空，则加法不存在，对于carry ,得先取模后除，ListNode是链表节点，ptr是代表正在处理的链表节点
+
+# Definition for singly-linked list.
+# class ListNode:
+#     def __init__(self, x):
+#         self.val = x
+#         self.next = None
+
+class Solution:
+    def addTwoNumbers(self, l1: ListNode, l2: ListNode) -> ListNode:
+        head=ListNode(0)
+        ptr=head
+        carry=0
+        while True:
+            if l1!=None:
+                carry+=l1.val
+                l1=l1.next
+            if l2!=None:    
+                carry+=l2.val
+                l2=l2.next
+            ptr.val=carry%10
+            carry//=10
+            if l1!=None or l2!=None or carry!=0:
+                ptr.next=ListNode(0)
+                ptr=ptr.next
+            else:
+                break
+                
+        return head
+
+/**
+ * Definition for singly-linked list.
+ * struct ListNode {
+ *     int val;
+ *     ListNode *next;
+ *     ListNode(int x) : val(x), next(NULL) {}
+ * };
+ */
+class Solution {
+public:
+    ListNode* addTwoNumbers(ListNode* l1, ListNode* l2) {
+        ListNode* head=new ListNode(0);
+        ListNode* ptr=head;
+        int carry=0;
+        while(true)
+        {
+            if(l1!=NULL)
+            {
+                carry+=l1->val;
+                l1=l1->next;
+            }
+            if(l2!=NULL)
+            {
+                carry+=l2->val;
+                l2=l2->next;
+            }
+            
+            ptr->val=carry%10;
+            carry/=10;
+            if(l1!=NULL||l2!=NULL||carry!=0)
+            {
+                ptr->next=new ListNode(0);
+                ptr=ptr->next;
+
+            }
+            else 
+                break;
+            
+            
+        }
+        return head;
+    }
+};
+
+三、无重复字符的最长子串
+
+给定一个字符串，你请找出其中不含有重复字符的  最长子串 的长度。
+
+示例1：
+
+输入： “abcabcbb”
+ 输出： 3 
+ 解释：因为无重复字符的最长子串是"abc"，所以其长度为3。
+
+示例2：
+
+输入： “bbbbb”
+ 输出： 1
+ 解释：因为无重复字符的最长子串是"b"，所以其长度为1。
+
+示例3：
+
+输入： “pwwkew”
+ 输出： 3
+ 解释：因为无重复字符的最长子串是  "wke"，所以其长度为3。
+ 注意，的你答案必须的英文子串的长度，”pwke" 的英文一个子序列，不是子串。
+
+基本思路：因为需要返回无重复字符的最长子串，需要用循环往后寻找，一旦查到有重复的，则需从集合的第一位开始往后删。
+
+class Solution(object):
+    def lengthOfLongestSubstring(self, s):
+        """
+        :type s: str
+        :rtype: int
+        """
+        temp=set()#定义一个集合，
+        j=0
+        n=len(s)
+        length=0
+        for i in range(n):
+            while j<n and s[j] not in temp:
+                temp.add(s[j])
+                j+=1
+            length=max(length,j-i)
+            temp.remove(s[i])
+        return length
+
+ C++ 11中对unordered_set描述大体如下：无序集合容器（unordered_set）是一个存储唯一(unique，即无重复）的关联容器（Associative container），容器中的元素无特别的秩序关系，该容器允许基于值的快速元素检索，同时也支持正向迭代
+
+set.count() 用来查找set中某个某个键值出现的次数。这个函数在set并不是很实用，因为一个键值在set只可能出现0或1次，这样就变成了判断某一键值是否在set出现过了
+
+class Solution {
+public:
+    int lengthOfLongestSubstring(string s) 
+    {
+        const int N=s.size();
+        unordered_set<char> set;
+        int left=0,right=0; 
+        int length=0;
+        while(right<N)
+        {
+            while(set.count(s[right]))
+            {
+                set.erase(s[left]);
+                left++;
+            }
+            set.insert(s[right]);
+            length=max(length,int(set.size()));
+            right++;  
+        }
+        return length;
+    }
+};
+
+
+
